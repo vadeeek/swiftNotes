@@ -82,7 +82,7 @@ let statusTuple1: (Int, String, Bool)
 
 // запись значений tuple в переменные
 let (firstWord, secondWord, _) = wordsAfterLose
-print("\(firstWord)\(secondWord) your mother")
+print("\(firstWord) \(secondWord) your mother")
 
 /*
  -- вывод через индексы tuple --
@@ -95,13 +95,16 @@ print("\(statusTuple1.statusCode)\(statusTuple1.statusText)\(statusTuple1.status
 
 
 //        <--- Dictionary --->
+// Коллекция неуникальных однотипных значений, упорядоченных по уникальному однотипному значению
 var phoneBookMothersOfTheDistrict: [String: String] = [:]
 var phoneBookMothersOfTheDistrict1 = [String: String]()
-var phoneBookMothersOfTheDistrict2 = ["Galochks":"+79999990011", "Julia":"+78990991423"]
+var phoneBookMothersOfTheDistrict2 = ["Galochka":"+79999990011",
+                                      "Julia":"+78990991423"]
 
 phoneBookMothersOfTheDistrict2["Galochka"] = "+79999990012"
 phoneBookMothersOfTheDistrict2["Tamara"] = "+79997790012"
 print(phoneBookMothersOfTheDistrict2)
+print(phoneBookMothersOfTheDistrict2.keys)
 
 if phoneBookMothersOfTheDistrict2.updateValue("+79999990000", forKey: "Galochka") != nil {
     print("Updated successfully!")
@@ -120,6 +123,9 @@ if let phone = phoneBookMothersOfTheDistrict2["Galochka"] {
 var animals: [String] = ["Wolf", "Bear", "Rabbit"]
 var animals1 = [String]()
 var animals2 = Array<String>()
+var nums = [1, 2, 3, 4, 5, 6] as [Double]
+var array5x5 = Array(repeating: Array(repeating: 25, count: 5), count: 5)
+print(array5x5)
 
 
 animals[2] = "Cat"
@@ -154,6 +160,13 @@ animals.sort { firstAnimal, lastAnimal in
 let alphabetAnimals = animals.sorted { firstAnimal, secondAnimal in
     firstAnimal < secondAnimal
 }
+// Замыкание подсчёта суммы чисел массива
+var arrSum = numbers.reduce(0) { (sum, value) in
+    return sum + value
+}
+// Ваще хз как работает🤯
+var value = numbers.map{$0 * 2}.filter{$0 < 5}.reduce(0, +)
+print(value)
 
 // Маппинг
 let numbersForMap = [1, 3, 5, 4, 6, 7]
@@ -292,7 +305,7 @@ if !lastMatchWin && badMood {
 
 // --- Guard ---
 func calc(x: Float?, y: Float) {
-    guard let x = x else { return} // Применение optional binding с guard
+    guard let x = x else { return } // Применение optional binding с guard
     guard y != 0 else { return }
     guard x > 5 else { return }
 
@@ -375,7 +388,7 @@ for (index, value) in shoppingList.enumerated() {
 //        <--- While and repeat-While --->
 var deepOfYourAssHole = 10
 
-while deepOfYourAssHole <= 20 {
+while deepOfYourAssHole <= 12 {
     print("Your ass hole will be deeper, be patient!")
     deepOfYourAssHole += 1
 }
@@ -405,6 +418,16 @@ func someFunction(id: Int) -> (firstname: String, lastname: String) {
 }
 // могут быть удобно разобраны на отдельные параметры на приемной стороне
 let (firstname, lastname) = someFunction(id: 12)
+
+func sumMany(numbers: Int...) {
+    var sum = 0
+    
+    for number in numbers {
+        sum += number
+    }
+    (sum)
+}
+sumMany(numbers: 1,2,3,4,5,6,7,8,9)
 
 func shoppingList(item: String, quantity: Int) -> String {
   "You need to buy \(quantity) \(item)."
@@ -480,5 +503,89 @@ func getUser() -> [String] {
 }
 let returning = getUser()
 print(returning[0])
+
+// Использование guard в Функции
+func greeting(name: String?) -> String {
+    guard let name = name else {
+        return "Привет, гость!"
+    }
+    return "Привет, \(name)!"
+}
+print(greeting(name: "vadeek"))
 //---------------------------------------------------------------------------------
 
+
+//        <--- Замыкания (Closures) --->
+// 1. Глобальные функции
+// 2. Вложенные функции
+// 3. Замыкающие выражения
+
+// { (параметры) -> ReturnType in
+     // тело замыкания
+// }
+
+// Простое замыкание, не принимающее и не возвращающее никаких значений
+let newGreeting = {
+    print("Hello, Pidor!")
+}
+newGreeting()
+
+
+let message = { (user: String?, text: String) in
+    if let user = user {
+        print("\(user), \(text)")
+    } else {
+        print(text)
+    }
+}
+message("Вася", "Привет, как дела?")
+message(nil, "Привет всем!")
+
+
+let summ = { (x: Int, y: Int) -> Int in
+    return x + y
+}
+summ(5, 67)
+
+let diff = { (x: Int, y: Int) -> Int in
+    return x - y
+}
+
+func operation(a: Int, _ b: Int, _ action: (Int, Int) -> Int) {
+    print(action(a, b))
+}
+
+// Синтаксис последующего замыкания
+operation(a: 15, 43) { x, y in
+    x * y
+}
+
+operation(a: 60, 20, diff)
+operation(a: 60, 20, summ)
+
+
+func pryam(width: Double, height: Double, action: (Double, Double) -> Double) -> Double {
+    return action(width, height)
+}
+
+let plosch = { (width: Double, height: Double) -> Double in
+    return width * height
+}
+
+let perim = { (width: Double, height: Double) -> Double in
+    return 2 * (width + height)
+}
+
+pryam(width: 2, height: 1, action: plosch)
+pryam(width: 2, height: 1, action: perim)
+//---------------------------------------------------------------------------------
+
+
+var arr3 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+var arr4 = [11, 22, 33, 44, 55]
+var arr5 = (arr3 + arr4).shuffled()
+print(arr5)
+
+for (index, item) in arr5.enumerated() where arr4.contains(item) {
+    print(index)
+}

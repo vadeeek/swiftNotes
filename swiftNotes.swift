@@ -288,6 +288,12 @@ print("Hello, fucking \(userName ?? defaultName)!")
 
 var x: Int? = 10
 var y: Int = x ?? 0
+
+// 3)
+var nickname: String? = "chumba"
+if let nickname {
+    print("Hey, \(nickname)")
+}
 //---------------------------------------------------------------------------------
 
 
@@ -581,11 +587,107 @@ pryam(width: 2, height: 1, action: perim)
 //---------------------------------------------------------------------------------
 
 
-var arr3 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-var arr4 = [11, 22, 33, 44, 55]
-var arr5 = (arr3 + arr4).shuffled()
-print(arr5)
-
-for (index, item) in arr5.enumerated() where arr4.contains(item) {
-    print(index)
+//        <--- Перечисления (Enum) --->
+enum TypeDevice {
+    case laptop(mark:markLaptop)
+    case desktopComputer
+    case tablet
+    case smartPhone(mark:markSmartPhone)
+    case smartWatch
+    
+    // Nested Enum
+    enum markLaptop {
+        case apple
+        case acer
+        case hp
+    }
+    // Nested Enum с Raw Value с наследованием от String
+    enum markSmartPhone:String {
+        case iphone = "Apple iPhone"
+        case samsung = "Samsung"
+    }
 }
+
+// let device:TypeDevice = .laptop(mark: .acer)
+let device:TypeDevice = .smartPhone(mark: .iphone)
+switch device {
+case .laptop(let markLaptop) where markLaptop == .apple:
+    print("Ноутбук Apple")
+case .laptop:
+    print("Ноутбук")
+case .desktopComputer:
+    print("ПК")
+case .smartWatch:
+    print("Умные часы")
+case .tablet:
+    print("Планшет")
+case .smartPhone(let markSmartPhone) where markSmartPhone == .iphone:
+    print("Смартфон \(markSmartPhone.rawValue)")
+case .smartPhone:
+    print("Смартфон")
+}
+
+
+enum markAuto:String {
+    case bmw = "BMW M5 F90"
+    case mercedes = "Mercedes AMG"
+}
+let markauto = markAuto(rawValue: "BMW M5 F90")
+print(markauto?.rawValue)
+//---------------------------------------------------------------------------------
+
+
+//        <--- Классы --->
+class Player {
+    
+    // Свойства
+    let name: String
+    var level: Int = 0
+    
+    // Стандартный инициализатор
+    init(name: String) {
+        self.name = name
+    }
+    
+    // Дефолтный инициализатор
+    init(name: String = "Гость", level: Int = 0) {
+        self.level = level
+        self.name = name
+    }
+    
+    func printInfo() {
+        print("Имя игрока: \(name). Уровень: \(self.level)")
+    }
+    
+    func levelUp(count: Int) {
+        self.level += count
+    }
+    
+    func levelDown(count: Int) {
+        guard count < self.level else {
+            self.level = 0
+            return
+        }
+        self.level -= count
+    }
+}
+
+var player1 = Player(name: "Фёдор")
+player1.printInfo()
+var player2 = Player(name: "Егор")
+player2.printInfo()
+var player3 = Player()
+player3.printInfo()
+var player4 = Player(name: "Алиса", level: 4)
+player4.printInfo()
+player4.levelUp(count: 2)
+player4.printInfo()
+player4.levelDown(count: 7)
+player4.printInfo()
+
+var players: [Player] = [player1, player2, player3, player4]
+
+for player in players {
+    print("\(player.name) | Уровень: \(player.level)")
+}
+//---------------------------------------------------------------------------------

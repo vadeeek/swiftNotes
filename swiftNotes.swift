@@ -890,3 +890,162 @@ for sportCar in sportCars {
     print(sportCar.brand)
 }
 //---------------------------------------------------------------------------------
+
+
+//        <--- Полиморфизм --->
+// Полиморфизм - это способность классов-наследников переопределять свойства(только вычислимые), методы и инициализаторы классов-родителей, а также перегружать функции
+
+class Teacher {
+    
+    let name: String
+    var description: String {
+        return "Привет! Меня зовут \(name). Я учитель."
+    }
+    
+    init(name: String) {
+        self.name = name
+    }
+    
+    func teach() {
+        print("Я учу людей прямо сейчас!")
+    }
+}
+
+class IOSTeacher: Teacher {
+    
+    let speciality: String
+    
+    // Переопределение свойства
+    override var description: String {
+        return "Привет! Меня зовут \(name). Я учитель по iOS-Разработке. Моя специальность - \(speciality)"
+    }
+    
+    init(name: String, speciality: String) {
+        self.speciality = speciality
+        super.init(name: name)
+    }
+    // Переопределение инициализатора
+    override init(name: String) {
+        self.speciality = "Frontend"
+        super.init(name: name)
+    }
+    
+    func swiftCoding() {
+        print("Я прогаю на Swift")
+    }
+    
+    override func teach() {
+        print("Я учу людей iOS-Разработке прямо сейчас!")
+    }
+    // Перегрузка метода
+    func teach(hours: Int) {
+        print("Я учу людей ближайшие \(hours) часов")
+    }
+}
+
+let teacher = Teacher(name: "Федя")
+teacher.description
+teacher.teach()
+
+let iOSTeacher = IOSTeacher(name: "Влад", speciality: "Front")
+iOSTeacher.speciality
+iOSTeacher.swiftCoding()
+
+let iOSTeacher2 = IOSTeacher(name: "Андрей")
+iOSTeacher2.speciality
+iOSTeacher2.description
+iOSTeacher2.teach()
+iOSTeacher2.teach(hours: 5)
+//---------------------------------------------------------------------------------
+
+
+//        <---  Инкапсуляция --->
+class Wallet {
+    
+    // Singleton
+    static let shared = Wallet()
+    private var balance = 0
+    
+    private init() { }
+    
+    func add(cash: Int) {
+        self.balance += cash
+        print(self.balance)
+    }
+    
+    func withdraw(cash: Int) -> Int {
+        
+        guard cash <= balance else {
+            return 0
+        }
+        
+        balance -= cash
+        return cash
+    }
+    
+    func getBalance() -> Int {
+        return self.balance
+    }
+}
+
+class Shop {
+    
+    var wallet = Wallet.shared
+}
+
+class Job {
+    
+    var wallet = Wallet.shared
+}
+
+var ashan = Shop()
+var fabrica = Job()
+
+fabrica.wallet.add(cash: 15000)
+let checkSum = ashan.wallet.withdraw(cash: 3000)
+
+print(checkSum)
+fabrica.wallet.getBalance()
+ashan.wallet.getBalance()
+
+class Person {
+    
+    let wallet = Wallet.shared
+    var goods = [String]()
+    
+    private func get(goods: String) {
+        self.goods.append(goods)
+        print("Товар \(goods) куплен!")
+    }
+    
+    private func give(money: Int) {
+        self.wallet.withdraw(cash: money)
+        print("Сумма чека: \(money) рублей")
+    }
+    
+    func buy(goods: String, price: Int) {
+        guard price <= wallet.getBalance() else {
+            return
+        }
+        
+        get(goods: goods)
+        give(money: price)
+    }
+}
+
+let vasya = Person()
+print(vasya.goods)
+vasya.wallet.getBalance()
+fabrica.wallet.add(cash: 80000)
+vasya.wallet.getBalance()
+vasya.buy(goods: "iPhone 13", price: 69990)
+//---------------------------------------------------------------------------------
+
+
+var array: [Int?] = [5, 4, 6, 99, nil, nil]
+
+for item in array {
+    sum += //...
+    // посчитать сумму с помощью optional binding, force unwrapping, ??
+
+}

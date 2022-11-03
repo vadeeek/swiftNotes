@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 /*
 В Swift существуют следующие виды операторов:
 -> Простые операторы, выполняющие операции со значениями (операндами). В их состав входят унарные и бинарные операторы.
@@ -180,6 +181,12 @@ let greetings = names.map { name in
     "Привет, \(name)!"
 }
 print(greetings)
+
+var animalss = [("Giraffe", 2), ("Wolf", 5)]
+var animalZooMap = animalss.map { (name, count) in
+    "This zoo has \(name), in quantity \(count)."
+}
+print(animalZooMap)
 //---------------------------------------------------------------------------------
 
 
@@ -689,5 +696,197 @@ var players: [Player] = [player1, player2, player3, player4]
 
 for player in players {
     print("\(player.name) | Уровень: \(player.level)")
+}
+
+
+
+
+class SalesManager {
+    
+    // СВОЙСТВА ТИПА:
+    // Хранимые(статические) - не могут наследоваться
+    static var phoneModel = "iPhone SE"
+    
+    // Вычисляемые(классовые) - могут наследоваться
+    class var companyTitle: String { return "DICK.COMPANY"}
+    
+    // СВОЙСТВА ЭКЗЕМПЛЯРА:
+    // Хранимые свойства (Stored Properties)
+    var salaryBase = 15000
+    var calls = 0 {
+        willSet {
+            print("Вы совершили \(newValue) звонков. Предыдущее значение \(calls)")
+        }
+        
+        didSet {
+            if calls >= 130 {
+                print("KPI по звонкам выполнен! Количество звонков: \(calls)")
+            }
+        }
+    }
+    
+    
+    var salesAmount = 0 {
+        // Наблюдатель отрабатывает перед установкой нового значения
+        willSet {
+            print("Вы продали товара на \(newValue) рублей. Предыдущее значение \(salesAmount)")
+        }
+        // Наблюдатель отрабатывает после установки нового значения
+        didSet {
+            if salesAmount >= 300000 {
+                print("KPI по продажам выполнен! Сумма продаж: \(salesAmount)")
+            }
+        }
+    }
+    
+    
+    var sanctionsAmount = 0
+    
+    // Ленивые свойства:
+    lazy var userPicture = UIImage()
+    
+    // Вычисляемые свойства (Computed Properties)
+    var motivation: Int {
+        
+        if calls >= 130 && salesAmount >= 300000 {
+            let motiv = self.calls * 50 + (salesAmount / 100 * 12)
+            return motiv
+        } else {
+            return 0
+        }
+    }
+    
+    var salary: Int {
+        var result = salaryBase + motivation - sanctionsAmount
+        guard result >= salaryBase / 2 else {
+            result = salaryBase / 2
+            return result
+        }
+        return result
+    }
+}
+
+let fedya = SalesManager()
+fedya.motivation
+SalesManager.phoneModel = "iPhone XR"
+fedya.salesAmount = 30000
+fedya.salesAmount = 400000
+fedya.calls = 5
+fedya.calls = 150
+//---------------------------------------------------------------------------------
+
+
+//        <--- Инициализаторы --->
+class Car {
+    
+    let brandAndModel: String
+    let wheelsCount: Int
+    var color = "White"
+    
+    // Инициализатор по умолчанию
+    init(brandAndModel: String, wheelsCount: Int = 4) {
+        self.brandAndModel = brandAndModel
+        self.wheelsCount = wheelsCount
+    }
+    
+    // Memberwise-инициализатор
+    init(brandAndModel: String, wheelsCount: Int, color: String) {
+        self.brandAndModel = brandAndModel
+        self.wheelsCount = wheelsCount
+        self.color = color
+    }
+    
+    // Failable-инициализатор
+    init?(brand: String, model: String, wheelsCount: Int) {
+        
+        if wheelsCount < 4 {
+            return nil
+        } else {
+            self.wheelsCount = wheelsCount
+            self.brandAndModel  = "\(brand) \(model)"
+        }
+    }
+    
+    // "Удобный" инициализатор
+    convenience init(brandAndModel: String, color: String) {
+        self.init(brandAndModel: brandAndModel)
+        self.color = color
+    }
+}
+
+let mercedes = Car(brandAndModel: "Mercedes-Benz AMG") // Используем инициализатор по умолчанию
+let bmw = Car(brandAndModel: "BMW M5 F90", wheelsCount: 6) // Используем инициализатор без учета значений по умолчанию
+let honda = Car(brandAndModel: "Honda Accord", color: "Red")
+//---------------------------------------------------------------------------------
+
+
+//        <--- Наследование --->
+class Vehicle {
+    
+    let brand: String
+    let massa: Int
+    
+    init(massa: Int, brand: String) {
+        self.brand = brand
+        self.massa = massa
+    }
+    
+    func go() {
+        print("It's going!")
+    }
+}
+
+let vehicle = Vehicle(massa: 12, brand: "Forward")
+
+class NewCar: Vehicle {
+    
+    let carType: String
+    let enginePower: Int
+    
+    init(carType: String, enginePower: Int, brand: String, massa: Int) {
+        self.carType = carType
+        self.enginePower = enginePower
+        super.init(massa: massa, brand: brand)
+    }
+    
+    func klakson() {
+        print("Beep-beeep!!!")
+    }
+}
+
+let audi = NewCar(carType: "City", enginePower: 300, brand: "Audi", massa: 1600)
+let kia = NewCar(carType: "City", enginePower: 150, brand: "Kia", massa: 1400)
+
+var cars: [NewCar] = [audi, kia]
+
+final class SportCar: NewCar {
+    
+    let maxSpeed: Int
+    
+    init(enginePower: Int, brand: String, massa: Int, maxSpeed: Int) {
+        self.maxSpeed = maxSpeed
+        super.init(carType: "Sport Car", enginePower: enginePower, brand: brand, massa: massa)
+    }
+}
+
+let ferrari = SportCar(enginePower: 430, brand: "Ferrari", massa: 1500, maxSpeed: 340)
+let porsche = SportCar(enginePower: 410, brand: "Porsche", massa: 1700, maxSpeed: 320)
+
+audi.go()
+porsche.massa
+
+cars.append(ferrari)
+cars.append(porsche)
+
+var sportCars = [SportCar]()
+
+for car in cars {
+    if car is SportCar {
+        sportCars.append((car as! SportCar))
+    }
+}
+
+for sportCar in sportCars {
+    print(sportCar.brand)
 }
 //---------------------------------------------------------------------------------

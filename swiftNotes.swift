@@ -442,6 +442,15 @@ func sumMany(numbers: Int...) {
 }
 sumMany(numbers: 1,2,3,4,5,6,7,8,9)
 
+// Сквозной параметр
+// inout - делает возможность константных параметров. при вызове функции в аргементы передается ссылка на значение
+func changeValue(value: inout Double) {
+    value = 5
+}
+var a = 1.0
+changeValue(value: &a)
+print(a)
+
 func shoppingList(item: String, quantity: Int) -> String {
   "You need to buy \(quantity) \(item)."
 }
@@ -525,6 +534,14 @@ func greeting(name: String?) -> String {
     return "Привет, \(name)!"
 }
 print(greeting(name: "vadeek"))
+
+// Вариативные функции
+func square(numbers: Int...) {
+    for number in numbers {
+        print("\(number) squared is \(number * number)")
+    }
+}
+square(numbers: 1, 2, 3, 4)
 //---------------------------------------------------------------------------------
 
 
@@ -645,6 +662,7 @@ print(markauto?.rawValue)
 
 
 //        <--- Классы --->
+// Ссылочный тип данных
 class Player {
     
     // Свойства
@@ -1040,6 +1058,63 @@ fabrica.wallet.add(cash: 80000)
 vasya.wallet.getBalance()
 vasya.buy(goods: "iPhone 13", price: 69990)
 //---------------------------------------------------------------------------------
+
+
+//        <--- Структуры --->
+
+// Класс - ссылочный тип данных (Reference Type)
+// Экземпляры класса хранят ссылку на область памяти, в которой содержится объект
+class NewPerson {
+    
+    let name: String
+    var phone: Int
+    
+    init(name: String, phone: Int) {
+        self.name = name
+        self.phone = phone
+    }
+    
+    func changePhone(phone: Int) -> Int {
+        self.phone = phone
+    }
+}
+
+// Структура - значимый тип данных (Value Type)
+// В структурах отсутствует применение принципов ООП
+// Экземпляры структур хранят значения
+struct User {
+    
+    let name: String
+    var phone: Int
+    
+    // Mutating(мутирующий) метод - это метод, который приводит к изменению самой структуры, то есть самого значения экземпляра, в котором этот метод объявлен
+    mutating func changePhone(phone: Int) -> Int {
+        self.phone = phone
+    }
+}
+
+
+let person = NewPerson(name: "Вася", phone: 89996665544)
+var person1 = NewPerson(name: "Олеся", phone: 84334334343)
+let user = User(name: "Федя", phone: 88887776655)
+var user1 = User(name: "Маша", phone: 12345678901)
+
+person.phone = 89008008070
+// user.phone = 86665554433 - ERROR! потому что это let значение, а не let ссылка на значение
+// person = person1 - ERROR!
+person1 = person // Теперь оба объекта ссылаются на person
+person.name
+person1.name
+person1.phone = 12345678999
+person.phone
+
+user1 = user
+user1.phone = 23456789012
+user.phone
+//---------------------------------------------------------------------------------
+
+
+
 
 
 var array: [Int?] = [5, 4, 6, 99, nil, nil]

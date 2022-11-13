@@ -611,7 +611,7 @@ pryam(width: 2, height: 1, action: perim)
 //---------------------------------------------------------------------------------
 
 
-//        <--- Перечисления (Enum) --->
+//        <--- Перечисления (Enumerations) --->
 enum TypeDevice {
     case laptop(mark:markLaptop)
     case desktopComputer
@@ -658,6 +658,112 @@ enum markAuto:String {
 }
 let markauto = markAuto(rawValue: "BMW M5 F90")
 print(markauto?.rawValue)
+
+
+enum DayTime {
+    case morning
+    case afternoon
+    case evening
+    case night
+}
+
+var currentTime = DayTime.afternoon
+currentTime = .evening
+
+let night: DayTime = .night
+
+switch currentTime {
+    
+case .morning:
+    print("Пью кофе")
+case .afternoon:
+    print("Пью чай")
+case .evening:
+    print("Пью")
+case .night:
+    print("Сплю")
+}
+
+// Ассоциируемые значения
+
+enum Profession {
+    case programmer(String, String, Int)
+    case sysAdmin(String, String)
+    case webDesigner(String, Int)
+    case cleaningManager(String)
+}
+
+let myProfession = Profession.programmer("Vadeek", "iOS", 0)
+let designer = Profession.webDesigner("Ирина", 30)
+
+func check(prof: Profession) {
+    switch prof {
+        
+    case .programmer(let name, let speciality, let experience):
+        print("Меня зовут \(name). Я работаю \(speciality)-Разработчиком вот уже \(experience) лет")
+    case .sysAdmin(let name, let speciality):
+        print("Меня зовут \(name). Я работаю системным администратором и специализируюсь на \(speciality)")
+    case .webDesigner(_, _):
+        break
+    case .cleaningManager(_):
+        break
+    }
+}
+check(prof: myProfession)
+
+// Чистые значения (Raw Value)
+enum MyPetName: String, CaseIterable {
+    case cat = "Vasya"
+    case dog = "Tuzik"
+    case boa = "Shnurok"
+    case parrot = "Popka Durak"
+}
+
+var myCat = MyPetName.cat
+var myCatName = myCat.rawValue
+
+var myPets = MyPetName.allCases
+print(myPets)
+
+for pet in myPets {
+    print(pet.rawValue)
+}
+
+enum Season: Int {
+    case winter = 1, spring, summer, autumn
+    
+    var label: String {
+        switch self {
+        case .winter:
+            return "Зима"
+        case .spring:
+            return "Весна"
+        case .summer:
+            return "Лето"
+        case .autumn:
+            return "Осень"
+        }
+    }
+    
+    init? (_ value: String) {
+        switch value {
+        case "Зима": self = .winter
+        case "Весна": self = .spring
+        case "Лето": self = .summer
+        case "Осень": self = .autumn
+        default: return nil
+        }
+    }
+    
+    func printLabel() {
+        print(self.label)
+    }
+}
+
+let season = Season("Зима")
+if season != nil {
+    season!.printLabel()
+}
 //---------------------------------------------------------------------------------
 
 
@@ -1114,6 +1220,208 @@ user.phone
 //---------------------------------------------------------------------------------
 
 
+//        <--- Протоколы --->
+// Протоколы - абстрактный тип данных
+// Абстрактный - не существует явных экземпляров данного типа, существуют только экземпляры, которые могут соответствовать этому типу (быть подписаны под этот тип)
+protocol FullyNamed {
+    var fullName: String { get }
+}
+
+struct Human: FullyNamed {
+    var fullName: String
+    var age: Int
+    var phoneNumber: Int
+}
+
+class Company: FullyNamed {
+    var fullName: String
+    var director = "Tim Cook"
+    
+    init(prefix: String, title: String) {
+        self.fullName = "\(prefix) \(title)"
+    }
+}
+
+let misha = Human(fullName: "Mikhail", age: 34, phoneNumber: 89009009090)
+let alisa = Human(fullName: "Alisa", age: 23, phoneNumber: 89008008080)
+let apple = Company(prefix: "LLC", title: "Apple")
+let google = Company(prefix: "LLC", title: "Google")
+
+class Bank: Company {
+    var clients = [FullyNamed]()
+    
+}
+
+let bank = Bank(prefix: "OOO", title: "Alfa-Bank")
+
+bank.clients.append(misha)
+bank.clients.append(alisa)
+bank.clients.append(apple)
+bank.clients.append(google)
+google.director = "Vasya Pupkin"
+
+for client in bank.clients {
+    print(client.fullName)
+    
+    if client is Human {
+        print((client as! Human).phoneNumber)
+    } else if client is Company {
+        print((client as! Company).director)
+    }
+}
+
+
+
+enum Speciality {
+    case iOS, android, python, java
+}
+
+protocol NewHuman {
+    var name: String { get }
+}
+
+protocol Developer {
+    var speciality: Speciality { get }
+    var experienceInYears: Int { get }
+}
+
+protocol NewTeacher {
+    var speciality: Speciality { get }
+    
+    func teach(theme: String)
+}
+
+struct DevTeacher: NewHuman, Developer, NewTeacher {
+    
+    var name: String
+    var speciality: Speciality
+    var experienceInYears: Int
+    
+    func teach(theme: String) {
+        print("I teach people. Theme: \(theme).")
+    }
+}
+
+let vlad = DevTeacher(name: "Vlad", speciality: .iOS, experienceInYears: 6)
+vlad.name
+vlad.teach(theme: "Protocols")
+
+
+
+
+
+
+protocol Named {
+    var title: String { get }
+}
+
+protocol Location {
+    var lat: Double { get }
+    var lon: Double { get }
+}
+
+struct City: Location, Named {
+    
+    var lat: Double
+    var lon: Double
+    var title: String
+}
+
+struct Club: Location, Named {
+    
+    var lat: Double
+    var lon: Double
+    var title: String
+}
+
+struct Brand: Named {
+    
+    var title: String
+    
+}
+
+func concert(place: Location & Named, band: String) {
+    print("Group \(band) protrude in \(place.title). Coordinates for GRS: \(place.lat), \(place.lon)")
+}
+
+let moscow = City(lat: 45.56464, lon: 45.557565, title: "Moscow")
+let glavClub = Club(lat: 64.54654, lon: 43.545353, title: "GlavClub")
+let brand = Brand("Apple")
+
+concert(place: moscow, band: "Naiw")
+concert(place: glavClub, band: "Dergat'")
+//---------------------------------------------------------------------------------
+
+
+//        <--- Паттерны --->
+
+//            Паттерн Делегат
+// Делегатор - тот, кто ставит задачу
+// Тип делегата - протокол, который описывает, какими свойствами и методами должен обладать Делегат
+// Делегат - тот, кто исполняет задачу
+
+protocol CoffeeMakerDelegate {
+    func makeCoffee(amount: Int) -> Int
+}
+
+class Client {
+    
+    var name = "Vadeek"
+    
+    var coffeeMaker: CoffeeMakerDelegate?
+    
+    func visitCoffeeHouse(coffeeMaker: CoffeeMakerDelegate) {
+        self.coffeeMaker = coffeeMaker
+    }
+    
+    func goOutCoffeeHouse() {
+        self.coffeeMaker = nil
+    }
+    
+    func buyCoffee(amount: Int) {
+        guard let delegate = coffeeMaker else {
+            print("You're not in Coffee House")
+            return
+        }
+        
+        let count = delegate.makeCoffee(amount: amount)
+        print("You bought \(count) cups of coffee")
+    }
+}
+
+struct Officiant: CoffeeMakerDelegate {
+    
+    func makeCoffee(amount: Int) -> Int {
+        let price = 350
+        let count = amount / price
+        return count
+    }
+}
+
+struct Barista: CoffeeMakerDelegate {
+    func makeCoffee(amount: Int) -> Int {
+        let price = 100
+        let count = amount / price
+        return count
+    }
+}
+
+let officiant = Officiant()
+
+let client = Client()
+
+client.visitCoffeeHouse(coffeeMaker: officiant)
+client.buyCoffee(amount: 2000)
+client.goOutCoffeeHouse()
+
+let barista = Barista()
+
+client.visitCoffeeHouse(coffeeMaker: barista)
+client.buyCoffee(amount: 400)
+client.goOutCoffeeHouse()
+
+client.buyCoffee(amount: 600)
+//---------------------------------------------------------------------------------
 
 
 

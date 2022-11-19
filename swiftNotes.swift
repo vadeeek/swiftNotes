@@ -112,7 +112,7 @@ if phoneBookMothersOfTheDistrict2.updateValue("+79999990000", forKey: "Galochka"
 } else {
     print("It's new record!")
 }
-print(phoneBookMothersOfTheDistrict2["Galochka"])
+print(phoneBookMothersOfTheDistrict2["Galochka"]!)
 
 if let phone = phoneBookMothersOfTheDistrict2["Galochka"] {
     print(phone)
@@ -263,7 +263,7 @@ print("You got \(allCakesCount) cakes, little pizd'uk!")
 // 2)
 let userName: String? = "Vadeek"
 let age: Int? = 19
-age != nil ? print("Name: \(userName). Age: \(age!).") : print("Name: \(userName).")
+age != nil ? print("Name: \(userName!). Age: \(age!).") : print("Name: \(userName!).")
 
 
 // 4. Оператор опционального объединения (связывания) по nil (optional binding)
@@ -1180,7 +1180,7 @@ class NewPerson {
         self.phone = phone
     }
     
-    func changePhone(phone: Int) -> Int {
+    func changePhone(phone: Int) {
         self.phone = phone
     }
 }
@@ -1194,7 +1194,7 @@ struct User {
     var phone: Int
     
     // Mutating(мутирующий) метод - это метод, который приводит к изменению самой структуры, то есть самого значения экземпляра, в котором этот метод объявлен
-    mutating func changePhone(phone: Int) -> Int {
+    mutating func changePhone(phone: Int) {
         self.phone = phone
     }
 }
@@ -1270,8 +1270,6 @@ for client in bank.clients {
     }
 }
 
-
-
 enum Speciality {
     case iOS, android, python, java
 }
@@ -1346,7 +1344,7 @@ func concert(place: Location & Named, band: String) {
 
 let moscow = City(lat: 45.56464, lon: 45.557565, title: "Moscow")
 let glavClub = Club(lat: 64.54654, lon: 43.545353, title: "GlavClub")
-let brand = Brand("Apple")
+let brand = Brand(title: "Apple")
 
 concert(place: moscow, band: "Naiw")
 concert(place: glavClub, band: "Dergat'")
@@ -1424,11 +1422,75 @@ client.buyCoffee(amount: 600)
 //---------------------------------------------------------------------------------
 
 
+//        <--- Дженерики (Обобщения, Generics) --->
+// Generics - обобщенные типы данных
 
-var array: [Int?] = [5, 4, 6, 99, nil, nil]
+// Equatable - равно/не равно == !=
+// Comparable - сравнимые(сопоставимые) < > <= >= == !=
+// CustomStringConvertible - могут быть представлены в виде строки
+// Numeric - все числа
 
-for item in array {
-    sum += //...
-    // посчитать сумму с помощью optional binding, force unwrapping, ??
-
+func addInts(a: Int, b: Int) -> Int {
+    return  a + b
 }
+
+func add<T: Numeric>(a: T, b: T) -> T {
+    return a + b
+}
+
+add(a: 56, b: 23)
+add(a: 56.4, b: 23.9)
+
+
+//---------------------------------------------------------------------------------
+
+
+//        <--- Обработка ошибок/исключений --->
+
+enum AuthError: Error {
+    case wrongPassword
+    case dataNotExists
+    case serverLost
+}
+
+// Способы обработки ошибок:
+
+// 1. Проброс ошибку ( throws - значит функция способна внутри себя сгенерировать ошибку )
+func auth(login: String, password: String) throws {
+    
+    let trueLogin = "Vasya"
+    let truePass = "123"
+    
+    guard login == trueLogin else {
+        throw AuthError.dataNotExists
+    }
+    
+    guard password == truePass else {
+        throw AuthError.wrongPassword
+    }
+    
+    print("Hello, Admin!")
+}
+
+
+// 2. Обработка ошибок с помощью блока do-catch
+do {
+    try auth(login: "Fedya", password: "4567")
+    // var string = try ... можно сохранить в переменную для дальнейших операций
+} catch AuthError.dataNotExists {
+    print("Data not Exists")
+} catch AuthError.wrongPassword {
+    print("Wrong Password")
+} catch {
+    print("Some else Exception")
+}
+
+
+// 3. Конвертация в опциональное значение (этот метод помогает в том случае, если нам не требуется обрабатывать ошибки, а мы всего лишь хотим знать, успешно функция была выполнена или нет)
+try? auth(login: "Vasya", password: "123546")
+
+
+// 4. Утверждение безошибочности (в том случае, если мы точно знаем, что генерирующий ошибку код не способен сгенерировать ошибку)
+try! auth(login: "Vasya", password: "123")
+// try! auth(login: "Vasya", password: "12357") - ВЫЗОВЕТ ОШИБКУ!!!
+//---------------------------------------------------------------------------------

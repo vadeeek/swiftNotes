@@ -344,14 +344,25 @@ case 2...3:
     print("Плохо!")
 case 2:
     print("Очень Плохо!")
-    fallthrough // Провал ниже, в данном случае в default
+    fallthrough // Принудительный провал ниже (независимо от истинности след кейса), в данном случае в default
 default:
     print("Мне нечего сказать...")
 }
 
+let arri: [any Equatable] = [5, 5.4, Float(5.4)]
+
+switch arri[0] {
+case _ as Int: print("Int")
+case _ as Float: print("Float")
+case _ as Double: print("Double")
+default:
+    break
+}
+
+
 // Switch and Tuple
 let somePoint = (1, 1)
-switch somePoint{
+switch somePoint {
 case (0, 0):
     print("\(somePoint) is at the origin")
 case (_, 0):
@@ -1217,6 +1228,28 @@ person.phone
 user1 = user
 user1.phone = 23456789012
 user.phone
+
+
+
+
+struct Person1 {
+    var name: String
+    var age: Int
+}
+
+var pers = Person1(name: "Anthony", age: 32)
+var pers1 = Person1(name: "Petr", age: 21)
+
+var couch = Person1(name: "Ivanovich", age: 56)
+
+struct HockeyTeam {
+    var name: String
+    var members: [Person1]
+    var couch: Person1
+    var score: Int
+}
+
+var team1 = HockeyTeam(name: "Minsk Warriours", members: [pers, pers1], couch: couch, score: 0)
 //---------------------------------------------------------------------------------
 
 
@@ -1494,3 +1527,159 @@ try? auth(login: "Vasya", password: "123546")
 try! auth(login: "Vasya", password: "123")
 // try! auth(login: "Vasya", password: "12357") - ВЫЗОВЕТ ОШИБКУ!!!
 //---------------------------------------------------------------------------------
+
+
+
+
+
+
+var array: [Int?] = [5, 4, 6, 99, nil, nil]
+var sumi = 0
+
+// first way (force unwrapping)
+for item in array {
+    if item != nil {
+        sumi += item!
+    }
+    // посчитать сумму с помощью optional binding, force unwrapping, ??
+}
+
+// second way (optional binding)
+for item in array {
+    if let item = item {
+        sumi += item
+    }
+}
+
+// third way (??)
+for item in array {
+    sumi += item ?? 0
+}
+
+
+
+
+
+var studentsJournal: [String:Int] = ["Vasya _":4, "Gena _":3, "Jora _":5, "Olesya _":5, "Alexander _":2]
+var summi = 0.0
+
+studentsJournal.updateValue(5, forKey: "Vasya _")
+studentsJournal.updateValue(4, forKey: "Alexander _")
+studentsJournal.updateValue(4, forKey: "Michael _")
+studentsJournal.updateValue(3, forKey: "Maxim _")
+studentsJournal.removeValue(forKey: "Vasya _")
+studentsJournal.removeValue(forKey: "Olesya _")
+
+for value in studentsJournal.values {
+    summi += Double(value)
+}
+summi
+summi /= Double(studentsJournal.count)
+
+
+
+
+
+var monthDays = ["Jan":31, "Feb":28, "Mar":31, "Apr":29, "May":31, "Jun":30, "Jul":29, "Aug":31, "Sep":30, "Oct":31, "Nov":30, "Dec":31]
+
+for (month, days) in monthDays {
+    print(month, days)
+}
+
+for month in monthDays.keys {
+    print("\(month) - \(monthDays[month]!)")
+}
+
+
+
+
+
+var chess = [String:Bool]()
+
+var letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
+var numberss = Array(1...8)
+
+for (index, value) in letters.enumerated() {
+    for num in numberss {
+        var str = "\(value)\(num)"
+        guard (index + num) % 2 == 0 else {
+            chess.updateValue(false, forKey: str)
+            continue
+        }
+        chess.updateValue(true, forKey: str)
+    }
+}
+chess.count
+
+
+// A - 0 - Black (false)
+// B - 1 - White (true)
+
+// key - A1, value - true/false
+// true - white
+// false - black
+
+    
+
+
+
+
+let strin = "dwjdkandkjnk, andk, dwkdwaklda. dwkaldmawlkd2322. 21 askald, sldka;, ald;sa 'dawdsa', wad. 12lk;lk, 2112121."
+
+var sumLetters = 0
+var sumNums = 0
+var sumSigns = 0
+
+for i in strin {
+    switch i {
+    case "0","1","2","3","4","5","6","7","8","9":
+        sumNums += 1
+    case ".",",",";","'":
+        sumSigns += 1
+    default:
+        if i != " " {
+            sumLetters += 1
+            break
+        }
+        break
+    }
+}
+sumSigns
+sumLetters
+sumNums
+
+
+
+
+
+let personFirstName = "Mihail"
+let personSecondName = "Zubenko"
+let personOtchestvo = "Petrovich"
+
+switch (personFirstName, personSecondName, personOtchestvo) {
+case (let first, _, _) where first.lowercased().first == "o" || first.lowercased().first == "a":
+    print("\(first)")
+case (let first, _, let otchestvo) where otchestvo.lowercased().first == "v" || otchestvo.lowercased().first == "d":
+    print("\(first) \(otchestvo)")
+case (_, let second, _) where second.lowercased().first == "z" || second.lowercased().first == "e":
+    print("\(second)")
+default:
+    print("\(personSecondName) \(personFirstName) \(personOtchestvo)")
+    break
+}
+// имя на о или а, то по имени
+// отчество на в или д, то имя и отчество
+// фамилия на з или е, то фамилия
+// дефолт имя отчество фамилия
+
+
+
+
+
+// 4.
+// Поле 10х10 Морской Бой
+// Осталось несколько кораблей, несколько подбито. Длинные/однопоинтные корабли
+// Свитч получает tuple point(x,y) -> мимо/ранил/убил
+
+
+
